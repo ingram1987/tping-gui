@@ -25,13 +25,13 @@ namespace tping_gui
     ///
     public partial class MainWindow : Window
     {
-        public static string IpHostnameValue;
-        private helper callPing = new helper();
+        public static string ipHostnameValue;
+        private Helper callPing = new Helper();
         
         public MainWindow()
         {
             InitializeComponent();
-            callPing.createTimer();
+            callPing.CreateTimer();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -47,9 +47,9 @@ namespace tping_gui
         public void Button_Click(object sender, RoutedEventArgs e)
         {
             //Start pinging
-            IpHostnameValue = IP.Text;
-            var requestedPings = Int32.Parse(pingCount.Text);
-            callPing.ClearForm(this);
+            ipHostnameValue = IP.Text;
+            var requestedPings = int.Parse(pingCount.Text);
+            callPing.ClearOutputWindow(this);
             callPing.PingHost(this, requestedPings);
         }
 
@@ -61,7 +61,7 @@ namespace tping_gui
         private void clear_Click(object sender, RoutedEventArgs e)
         {
             //Clears the output window
-            callPing.ClearForm(this);
+            callPing.ClearOutputWindow(this);
         }
 
         private void stop_Click(object sender, RoutedEventArgs e)
@@ -73,7 +73,7 @@ namespace tping_gui
         private void exportCSV_Click(object sender, RoutedEventArgs e)
         {
             //Exports the output windows to a CSV file
-            callPing.saveCSV();
+            callPing.ExportToCSV();
         }
     }
 }
