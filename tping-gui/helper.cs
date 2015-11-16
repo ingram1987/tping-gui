@@ -18,7 +18,7 @@ namespace tping_gui
         public static int _pingCountValue = 0; //Number of pings to run
         public MainWindow _window;
         public DispatcherTimer _timer1 = new DispatcherTimer();
-        private int _completedPingCounter = 0;
+        public int _completedPingCounter = 0;
         public int _pingRoundTripSum = 0;
         private string _temporaryPingDataFile = null;
         private static StreamWriter _processedData;
@@ -26,23 +26,32 @@ namespace tping_gui
         
         public void PingHost(MainWindow window, int pingValue)
         {
-            _temporaryPingDataFile = Path.GetTempFileName();
-            _window = window;
-            _pingCountValue = pingValue;
-            _pingRoundTripSum = 0;
-            _window.avgPingTime.Content = null;
-            _window.numberOfPings.Content = null;
-            //Checks to see if IPHostnameValue is in a valid IP or Hostname format, and then starts timedEvent
-            if(Uri.CheckHostName(MainWindow.ipHostnameValue) != UriHostNameType.Unknown)
+            try
             {
-                _window.StartPing.IsEnabled = false;
-                _timer1.Start();
-                //Sets the focus to the output window, so it will scroll with the results
-                _window.Output.Focus();
+                _temporaryPingDataFile = Path.GetTempFileName();
+                _window = window;
+                _pingCountValue = pingValue;
+                _pingRoundTripSum = 0;
+                _window.avgPingTime.Content = null;
+                _window.numberOfPings.Content = null;
+                //Checks to see if IPHostnameValue is in a valid IP or Hostname format, and then starts timedEvent
+                if (Uri.CheckHostName(MainWindow.ipHostnameValue) != UriHostNameType.Unknown)
+                {
+                    _window.StartPing.IsEnabled = false;
+                    _timer1.Start();
+                    //Sets the focus to the output window, so it will scroll with the results
+                    _window.Output.Focus();
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a valid hostname or IP");
+                }
             }
-            else
+            catch(Exception er)
             {
-                MessageBox.Show("Please enter a valid hostname or IP");
+                stopPing();
+                MessageBox.Show("Error with application" + Environment.NewLine + Environment.NewLine + er);
+
             }
             
 
@@ -65,17 +74,30 @@ namespace tping_gui
             {
                 
                 Ping ping = new Ping();
-                PingReply pingReply = ping.Send(MainWindow.ipHostnameValue);
-                _pingRoundTripSum += Convert.ToInt32(pingReply.RoundtripTime);
-                string pingCurrentLine = String.Format("{0}, " + "{1}, " + "{2}, " + DateTime.Now.TimeOfDay, MainWindow.ipHostnameValue, pingReply.RoundtripTime, pingReply.Status);
-                _processedData.WriteLine(pingCurrentLine);
-                _window.Output.AppendText(pingCurrentLine + Environment.NewLine);
-                _window.avgPingTime.Content = _pingRoundTripSum / _completedPingCounter;
-                _window.numberOfPings.Content = _completedPingCounter;
-                _window.progress.Value = _completedPingCounter;
-                //Forces the output window to scroll down
-                _window.Output.SelectionStart = int.MaxValue;
-                _processedData.Close();
+                try
+                {
+                    PingReply pingReply = ping.Send(MainWindow.ipHostnameValue);
+                    _pingRoundTripSum += Convert.ToInt32(pingReply.RoundtripTime);
+                    string pingCurrentLine = String.Format("{0}, " + "{1}, " + "{2}, " + DateTime.Now.TimeOfDay, MainWindow.ipHostnameValue, pingReply.RoundtripTime, pingReply.Status);
+                    _processedData.WriteLine(pingCurrentLine);
+                    _window.Output.AppendText(pingCurrentLine + Environment.NewLine);
+                    _window.avgPingTime.Content = _pingRoundTripSum / _completedPingCounter;
+                    _window.numberOfPings.Content = _completedPingCounter;
+                    _window.progress.Value = _completedPingCounter;
+                    //Forces the output window to scroll down
+                    _window.Output.SelectionStart = int.MaxValue;
+                    _processedData.Close();
+                }
+                catch(PingException er)
+                {
+                    stopPing();
+                    MessageBox.Show("Ping error - Check NIC" + Environment.NewLine + Environment.NewLine + er.ToString());
+                }
+                catch(Exception er)
+                {
+                    stopPing();
+                    MessageBox.Show("Something went wrong" + Environment.NewLine + Environment.NewLine + er.ToString());
+                }
                 
                 
             }
@@ -108,23 +130,32 @@ namespace tping_gui
         //Exports the data from the output window to a csv file
         public void ExportToCSV()
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "CSV|*.csv";
-            saveFileDialog1.Title = "Export to CSV";
-
-            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss");
-            saveFileDialog1.FileName = currentDateTime;
-            Nullable<bool> saveFileResult = saveFileDialog1.ShowDialog();
-            //If saveFileResut is null (user clicked cancel) then do nothing
-            if (saveFileResult == false)
+            try
             {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "CSV|*.csv";
+                saveFileDialog1.Title = "Export to CSV";
+
+                string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss");
+                saveFileDialog1.FileName = currentDateTime;
+                Nullable<bool> saveFileResult = saveFileDialog1.ShowDialog();
+                //If saveFileResut is null (user clicked cancel) then do nothing
+                if (saveFileResult == false)
+                {
+                    return;
+                }
+                //Copy the temporary file with the ping data to a csv file
+                else
+                {
+                    File.Copy(_temporaryPingDataFile, saveFileDialog1.FileName);
+                }
+            }
+            catch (Exception er)
+            {
+                MessageBox.Show("Error with filename" + Environment.NewLine + Environment.NewLine + er);
                 return;
             }
-            //Copy the temporary file with the ping data to a csv file
-            else
-            {
-                File.Copy(_temporaryPingDataFile, saveFileDialog1.FileName);
-            }
+
         }
     }  
 }

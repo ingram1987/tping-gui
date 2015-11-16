@@ -11,8 +11,6 @@ C:\Users\user\Documents\Visual Studio 2013\Projects\tping-gui\tping-gui\obj\Debu
 C:\Users\user\Documents\Visual Studio 2013\Projects\tping-gui\tping-gui\obj\Debug\tping-gui.exe
 C:\Users\user\Documents\Visual Studio 2013\Projects\tping-gui\tping-gui\obj\Debug\tping-gui.pdb
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\bin\Debug\tping-gui.exe.config
-C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.exe
-C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.pdb
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\bin\Debug\tping-gui.exe
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\bin\Debug\tping-gui.pdb
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.csprojResolveAssemblyReference.cache
@@ -23,3 +21,5 @@ C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui_MarkupCom
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.g.resources
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping_gui.Properties.Resources.resources
 C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.csproj.GenerateResource.Cache
+C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.exe
+C:\Users\user\Documents\GitHub\tping-gui\tping-gui\obj\Debug\tping-gui.pdb
