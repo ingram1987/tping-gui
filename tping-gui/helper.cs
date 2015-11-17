@@ -9,6 +9,8 @@ using System.IO;
 using System.Timers;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using System.Management;
+
 
 
 namespace tping_gui
@@ -156,6 +158,30 @@ namespace tping_gui
                 return;
             }
 
+        }
+        static string GetMacAddress()
+        {
+            //Get list of all Win32_NetworkAdapter objects.
+            ObjectQuery query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+            ManagementObjectCollection collection = searcher.Get();
+            //--
+            //Iterate through results until the property 'MacAddress' is found.
+            foreach (ManagementObject obj in collection)
+            {
+                if (obj.Properties["MacAddress"] != null)
+                {
+                    try
+                    {
+                        string value = obj.Properties["MacAddress"].Value.ToString();
+                        return value;
+                    }
+                    catch (NullReferenceException) { }
+                }
+
+            }
+            //--
+            return "";
         }
     }  
 }
