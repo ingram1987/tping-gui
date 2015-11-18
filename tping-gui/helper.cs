@@ -159,13 +159,12 @@ namespace tping_gui
             }
 
         }
-        static string GetMacAddress()
+        public string GetMacAddressActiveNIC()
         {
             //Get list of all Win32_NetworkAdapter objects.
             ObjectQuery query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter");
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
             ManagementObjectCollection collection = searcher.Get();
-            //--
             //Iterate through results until the property 'MacAddress' is found.
             foreach (ManagementObject obj in collection)
             {
@@ -176,12 +175,35 @@ namespace tping_gui
                         string value = obj.Properties["MacAddress"].Value.ToString();
                         return value;
                     }
-                    catch (NullReferenceException) { }
+                    catch (NullReferenceException)
+                    {
+
+                    }
                 }
 
             }
-            //--
             return "";
+        }
+        public string GetGatewayAddress(string mac)
+        {
+            //string wmiMacAddress = "";
+            string gatewayAddress = "";
+            var activeNIC = new object();
+            string wmiMacAddress = mac;
+            //Get collection of all network interfaces on the given machine.
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            for (int i = 0 ; i < nics.Length; i++)
+            {
+                //Compare the network interface's MAC address with the one found using WMI
+                //and append upon succesion.
+                if (nics[i].GetPhysicalAddress().ToString() == wmiMacAddress.Replace(":", ""))
+                {
+                    //networkInterfaceName = nics[i].Description;
+                    gatewayAddress = nics[i].GetIPProperties().GatewayAddresses.FirstOrDefault().Address.ToString();
+                }
+            }
+            //MessageBox.Show("Active Network Interface: {0}", networkInterfaceName);
+            return gatewayAddress;
         }
     }  
 }

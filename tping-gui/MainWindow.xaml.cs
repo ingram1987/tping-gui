@@ -32,6 +32,7 @@ namespace tping_gui
         {
             InitializeComponent();
             callPing.CreateTimer();
+            IP.Text = callPing.GetGatewayAddress(callPing.GetMacAddressActiveNIC());
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
