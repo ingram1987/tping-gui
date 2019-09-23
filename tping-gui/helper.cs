@@ -187,23 +187,31 @@ namespace tping_gui
         public string GetGatewayAddress(string mac)
         {
             //string wmiMacAddress = "";
-            string gatewayAddress = "";
-            var activeNIC = new object();
-            string wmiMacAddress = mac;
-            //Get collection of all network interfaces on the given machine.
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            for (int i = 0 ; i < nics.Length; i++)
+            try
             {
-                //Compare the network interface's MAC address with the one found using WMI
-                //and append upon succesion.
-                if (nics[i].GetPhysicalAddress().ToString() == wmiMacAddress.Replace(":", ""))
+                string gatewayAddress = "";
+                var activeNIC = new object();
+                string wmiMacAddress = mac;
+                //Get collection of all network interfaces on the given machine.
+                NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                for (int i = 0; i < nics.Length; i++)
                 {
-                    //networkInterfaceName = nics[i].Description;
-                    gatewayAddress = nics[i].GetIPProperties().GatewayAddresses.FirstOrDefault().Address.ToString();
+                    //Compare the network interface's MAC address with the one found using WMI
+                    //and append upon succesion.
+                    if (nics[i].GetPhysicalAddress().ToString() == wmiMacAddress.Replace(":", ""))
+                    {
+                        //networkInterfaceName = nics[i].Description;
+                        gatewayAddress = nics[i].GetIPProperties().GatewayAddresses.FirstOrDefault().Address.ToString();
+                    }
                 }
+                //MessageBox.Show("Active Network Interface: {0}", networkInterfaceName);
+                return gatewayAddress;
             }
-            //MessageBox.Show("Active Network Interface: {0}", networkInterfaceName);
-            return gatewayAddress;
+            catch (Exception)
+            {
+
+                return "0.0.0.0";
+            }
         }
     }  
 }
